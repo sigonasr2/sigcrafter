@@ -1,0 +1,60 @@
+package sig;
+
+public class Skill implements SkillInterface{
+	public String name;
+	public int CPCost;
+	public boolean guaranteed;
+	public int lvReq;
+	public Skill(String name, int CPCost, boolean guaranteed, int lvReq) {
+		this.name = name;
+		this.CPCost = CPCost;
+		this.guaranteed = guaranteed;
+		this.lvReq = lvReq;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getCPCost() {
+		return CPCost;
+	}
+	public void setCPCost(int cPCost) {
+		CPCost = cPCost;
+	}
+	public boolean isGuaranteed() {
+		return guaranteed;
+	}
+	public void setGuaranteed(boolean guaranteed) {
+		this.guaranteed = guaranteed;
+	}
+	public int getLvReq() {
+		return lvReq;
+	}
+	public void setLvReq(int lvReq) {
+		this.lvReq = lvReq;
+	}
+	@Override
+	public void useSkill(Craft c) {
+		c.craft_cp -= CPCost;
+		c.progress_mult=1;
+		c.quality_mult=1;
+		c.durability_mult=1;
+		c.control = c.base_control;
+		for (String key : c.BuffList.keySet()) {
+			if (c.BuffList.get(key).stackCount>0 && !key.equalsIgnoreCase("Inner Quiet") && !key.equalsIgnoreCase("Name of the Elements Has Been Used")) {
+				c.BuffList.get(key).stackCount-=1;
+			}
+		}
+		c.control += c.base_control * 0.2 * c.BuffList.get("Inner Quiet").stackCount;
+		c.progress_mult += c.BuffList.get("Veneration").stackCount>0?0.5:0;
+		c.quality_mult += c.BuffList.get("Great Strides").stackCount>0?1:0;
+		c.quality_mult += c.BuffList.get("Innovation").stackCount>0?0.5:0;
+		c.durability_mult = c.BuffList.get("Waste Not").stackCount>0||c.BuffList.get("Waste Not II").stackCount>0?0.5:1;
+	}
+	@Override
+	public boolean canBeUsed(Craft c) {
+		return c.craft_cp>=CPCost;
+	}	
+}
