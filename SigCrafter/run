@@ -1,0 +1,2 @@
+javac src/sig/*.java src/sig/skills/*.java -d bin
+java -cp bin sig/SigCraft
