@@ -87,8 +87,8 @@ public class SigCraft {
 	public static void SetupCraft() {
 
 		List<Skill> progress_rotation1 = new ArrayList<Skill>();
+		int progressSteps = 0;
 		List<Skill> progress_rotation2 = new ArrayList<Skill>();
-		List<Skill> progress_rotation3 = new ArrayList<Skill>();
 
 		Craft c1 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		//Tame rotation attempt.
@@ -102,17 +102,20 @@ public class SigCraft {
 		//Veneration rotation attempt.
 		Skill s = SKILLLIST.get("Veneration");
 		s.useSkill(c2);
+		progress_rotation2.add(s);
 		while (c2.craft_progress<c2.progress_goal) {
 			if (c2.BuffList.get("Veneration").stackCount==0) {
 				s = SKILLLIST.get("Veneration");
 				s.useSkill(c2);
+				progress_rotation2.add(s);
 			}
 			s = SKILLLIST.get("Basic Synthesis");
 			s.useSkill(c2);
 			progress_rotation2.add(s);
+			progressSteps++;
 		}
-		System.out.println("Basic Synthesis with Veneration takes "+progress_rotation2.size()+" turns, consuming "+(c2.cp-c2.craft_cp)+" CP.");
-		if (progress_rotation2.size()<progress_rotation1.size()) {
+		System.out.println("Basic Synthesis with Veneration takes "+progressSteps+" turns, consuming "+(c2.cp-c2.craft_cp)+" CP.");
+		if (progressSteps<progress_rotation1.size()) {
 			PROGRESS_ROTATION.addAll(progress_rotation2);
 			System.out.println("\tUsing Veneration rotation for Progress.");
 		} else {
