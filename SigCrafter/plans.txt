@@ -1,0 +1,33 @@
+Program can measure how much CP and durability is required to get to desired progress.
+
+Subtract that from total CP to get how much CP is available for Quality.
+
+Calculate how much CP and durability it takes to reach 100% Quality with Guaranteed abilities.
+
+If the CP required < the remaining CP, enter the "Greed" analysis
+
+The greed analysis attempts to lower the number of attempts required to reach 100% quality for the sake of speed.
+
+Use greed skills until the "Greed" CP runs out.
+
+Basically:
+
+Use Greed CP first,
+Use Quality CP second,
+Use Progress CP third.
+ 
+Durability Analysis:
+ - Calculate what the minimum number of guaranteed steps for Progress and Quality are together.
+ If the durability is not enough to get there, see if Waste Not I will get us there.
+ If the durability is still not enough to get there, see if Waste Not II will get us there.
+ If that is still not enough then we will only get enough quality until the Progress steps required are left and finish.
+
+Progress CP analysis:
+ - Can we do it with no CP? If so, do that. Save CP for further steps.
+
+Quality CP analysis:
+ - Can we do it guaranteed? If so, do that.
+
+Greed CP analysis:
+ - What gets us the most bang for our buck?
+ - Program that operation in here.

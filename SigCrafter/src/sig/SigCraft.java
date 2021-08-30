@@ -89,7 +89,7 @@ public class SigCraft {
 			for (Buff b : BUFFLIST) {
 				c.BuffList.put(b.name,new Buff(b.name,b.stackCount));
 			}
-			if (s.canBeUsed(c)) {s.useSkill(c);}
+			if (s.canBeUsed(c)) {s.useSkill(c);c.SkillList.add(s);}
 			if (c.craftSucceeded()) {SucceededCrafts.add(c);}
 			System.out.println(c);
 		}
