@@ -17,7 +17,7 @@ public class Craft {
 	public List<Craft> CraftList = new ArrayList<Craft>();
 	public Craft(int control, int level, int cp, int base_progress, int progress_goal, int quality_goal, boolean guaranteed,
 			int durability, int craft_progress, int craft_quality, int craft_durability, int craft_cp,
-			double progress_mult, double quality_mult, double durability_mult, int recipe_level,Status craft_status) {
+			double progress_mult, double quality_mult, double durability_mult, int recipe_level,Status craft_status,Map<String,Buff> buffs) {
 		this.control = control;
 		this.base_control = control;
 		this.level = level;
@@ -36,6 +36,9 @@ public class Craft {
 		this.durability_mult = durability_mult;
 		this.recipe_level = recipe_level;
 		this.craft_status = craft_status;
+		for (Buff b : buffs.values()) {
+			BuffList.put(b.getName(),new Buff(b.getName(),b.getStackCount()));
+		}
 	}
 	public boolean craftFailed() {
 		return craft_progress<progress_goal && durability<=0;
