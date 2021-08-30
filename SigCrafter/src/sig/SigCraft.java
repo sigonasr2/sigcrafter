@@ -84,14 +84,8 @@ public class SigCraft {
 		List<Skill> skills = new ArrayList<Skill>();
 		skills.addAll(SKILLLIST);
 		skills.removeIf((skill)->{return skill.lvReq>LEVEL;});
-		for (Skill s : skills) {
-			Craft c = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL);
-			for (Buff b : BUFFLIST) {
-				c.BuffList.put(b.name,new Buff(b.name,b.stackCount));
-			}
-			if (s.canBeUsed(c)) {s.useSkill(c);c.SkillList.add(s);}
-			if (c.craftSucceeded()) {SucceededCrafts.add(c);}
-			System.out.println(c);
+		Craft c = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL);
+		while (c.craft_progress<c.progress_goal) {
 		}
 		System.out.println(SucceededCrafts);
 	}

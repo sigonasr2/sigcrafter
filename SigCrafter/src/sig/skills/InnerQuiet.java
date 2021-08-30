@@ -3,7 +3,6 @@ package sig.skills;
 import sig.Buff;
 import sig.Craft;
 import sig.Skill;
-import sig.Status;
 
 public class InnerQuiet extends Skill {
 	public InnerQuiet(String name, int CPCost, boolean guaranteed, int lvReq) {
