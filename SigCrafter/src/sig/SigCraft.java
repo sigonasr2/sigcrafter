@@ -125,6 +125,58 @@ public class SigCraft {
 			qualityCPRemaining = c1.craft_cp;
 			System.out.println("\tUsing standard rotation for Progress. Quality CP Available: "+qualityCPRemaining);
 		}
+
+		//Can we just straight up craft?
+		List<Skill> quality_rotation1 = new ArrayList<Skill>();
+		Craft c3 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,qualityCPRemaining,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		boolean combo=false;
+		while (c3.craft_quality<c3.quality_goal && c3.craft_durability>progressSteps*10) {
+			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
+			s.useSkill(c3);
+			quality_rotation1.add(s);
+			combo=!combo;
+		}
+		System.out.println("Raw Quality Rotation leaves "+c3.craft_cp+" CP, "+c3.craft_durability+" durability, "+(c3.quality_goal-c3.craft_quality)+" quality from the goal.");
+		
+		//Add Inner Quiet
+		List<Skill> quality_rotation2 = new ArrayList<Skill>();
+		Craft c4 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,qualityCPRemaining,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		s = SKILLLIST.get("Inner Quiet");
+		s.useSkill(c4);
+		quality_rotation2.add(s);
+		combo=false;
+		while (c4.craft_quality<c4.quality_goal && c4.craft_durability>progressSteps*10) {
+			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
+			s.useSkill(c4);
+			quality_rotation2.add(s);
+			combo=!combo;
+		}
+		System.out.println("Raw Quality + Inner Quiet Rotation leaves "+c4.craft_cp+" CP, "+c4.craft_durability+" durability, "+(c4.quality_goal-c4.craft_quality)+" quality from the goal.");
+		
+		//Add Innovation
+		List<Skill> quality_rotation3 = new ArrayList<Skill>();
+		Craft c5 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,qualityCPRemaining,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		List<Skill> current_rotation = quality_rotation3;
+		Craft current_craft = c5;
+		s = SKILLLIST.get("Inner Quiet");
+		s.useSkill(current_craft);
+		current_rotation.add(s);
+		s = SKILLLIST.get("Innovation");
+		s.useSkill(current_craft);
+		current_rotation.add(s);
+		combo=false;
+		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+			if (current_craft.BuffList.get("Innovation").stackCount==0) {
+				s = SKILLLIST.get("Innovation");
+				s.useSkill(current_craft);
+				current_rotation.add(s);
+			}
+			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
+			s.useSkill(current_craft);
+			current_rotation.add(s);
+			combo=!combo;
+		}
+		System.out.println("Raw Quality + Inner Quiet + Innovation Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 	}
 
 }
