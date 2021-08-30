@@ -89,6 +89,7 @@ public class SigCraft {
 		List<Skill> progress_rotation1 = new ArrayList<Skill>();
 		int progressSteps = 0;
 		List<Skill> progress_rotation2 = new ArrayList<Skill>();
+		int qualityCPRemaining = 0;
 
 		Craft c1 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		//Tame rotation attempt.
@@ -117,10 +118,12 @@ public class SigCraft {
 		System.out.println("Basic Synthesis with Veneration takes "+progressSteps+" turns, consuming "+(c2.cp-c2.craft_cp)+" CP.");
 		if (progressSteps<progress_rotation1.size()) {
 			PROGRESS_ROTATION.addAll(progress_rotation2);
-			System.out.println("\tUsing Veneration rotation for Progress.");
+			qualityCPRemaining = c2.craft_cp;
+			System.out.println("\tUsing Veneration rotation for Progress. Quality CP Available: "+qualityCPRemaining);
 		} else {
 			PROGRESS_ROTATION.addAll(progress_rotation1);
-			System.out.println("\tUsing standard rotation for Progress.");
+			qualityCPRemaining = c1.craft_cp;
+			System.out.println("\tUsing standard rotation for Progress. Quality CP Available: "+qualityCPRemaining);
 		}
 	}
 
