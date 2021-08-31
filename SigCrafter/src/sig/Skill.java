@@ -48,6 +48,7 @@ public class Skill implements SkillInterface{
 			}
 		}
 		c.control += c.base_control * 0.2 * c.BuffList.get("Inner Quiet").stackCount;
+		c.quality_mult += c.craft_status==Status.GOOD?0.5:c.craft_status==Status.EXCELLENT?3.0:0;
 		c.progress_mult += c.BuffList.get("Veneration").stackCount>0?0.5:0;
 		c.quality_mult += c.BuffList.get("Great Strides").stackCount>0?1:0;
 		c.quality_mult += c.BuffList.get("Innovation").stackCount>0?0.5:0;
