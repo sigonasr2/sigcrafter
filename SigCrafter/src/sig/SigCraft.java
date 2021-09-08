@@ -24,12 +24,12 @@ import sig.skills.WasteNotII;
 
 public class SigCraft {
 	public static int LEVEL = 48;
-	public static int RECIPE_LEVEL = 45;
+	public static int RECIPE_LEVEL = 41;
 	public static int CP = 282;
-	public static int BASE_PROGRESS = 51;
+	public static int BASE_PROGRESS = 57;
 	public static int CONTROL = 185;
-	public static int PROGRESS_GOAL = 158;
-	public static int QUALITY_GOAL = 2309;
+	public static int PROGRESS_GOAL = 143;
+	public static int QUALITY_GOAL = 2109;
 	public static boolean GUARANTEED = true;
 	public static int DURABILITY = 80;
 	
@@ -79,15 +79,23 @@ public class SigCraft {
 		BUFFLIST.put("Name of the Elements Has Been Used",new Buff("Name of the Elements Has Been Used",0));
 		BUFFLIST.put("Inner Quiet",new Buff("Inner Quiet", 0));
 		BUFFLIST.put("Waste Not",new Buff("Waste Not",0));
-		BUFFLIST.put("Waste Not II",new Buff("Waste Not II",0));
 		
 		SetupCraft();
+	}
+	
+	public static boolean IsThereEnoughTurns(int durability,Map<String,Buff> bufflist,int turnsRequired) {
+		Buff wasteNot = bufflist.get("Waste Not");
+		int turnsRemaining = (int)(durability%2==1&&wasteNot.stackCount%2==1?Math.ceil(((double)wasteNot.stackCount/2))-1:Math.ceil((double)wasteNot.stackCount/2))+(int)Math.ceil(durability/10);
+		int maxHalfTurnsRemaining = durability/5;
+		turnsRemaining = Math.min(maxHalfTurnsRemaining,turnsRemaining);
+		return turnsRemaining>turnsRequired;
 	}
 	
 	public static void SetupCraft() {
 
 		List<Skill> progress_rotation1 = new ArrayList<Skill>();
 		int progressSteps = 0;
+		int PROGRESS_FINAL_STEPS = 0;
 		List<Skill> progress_rotation2 = new ArrayList<Skill>();
 		int qualityCPRemaining = 0;
 
@@ -119,10 +127,12 @@ public class SigCraft {
 		if (progressSteps<progress_rotation1.size()) {
 			PROGRESS_ROTATION.addAll(progress_rotation2);
 			qualityCPRemaining = c2.craft_cp;
+			PROGRESS_FINAL_STEPS = progressSteps;
 			System.out.println("\tUsing Veneration rotation for Progress. Quality CP Available: "+qualityCPRemaining);
 		} else {
 			PROGRESS_ROTATION.addAll(progress_rotation1);
 			qualityCPRemaining = c1.craft_cp;
+			PROGRESS_FINAL_STEPS = progress_rotation1.size();
 			System.out.println("\tUsing standard rotation for Progress. Quality CP Available: "+qualityCPRemaining);
 		}
 
@@ -130,11 +140,12 @@ public class SigCraft {
 		List<Skill> quality_rotation1 = new ArrayList<Skill>();
 		Craft c3 = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,qualityCPRemaining,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		boolean combo=false;
-		while (c3.craft_quality<c3.quality_goal && c3.craft_durability>progressSteps*10) {
+		while (c3.craft_quality<c3.quality_goal && IsThereEnoughTurns(c3.craft_durability,c3.BuffList,PROGRESS_FINAL_STEPS)) {
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(c3);
 			quality_rotation1.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, quality_rotation1, c3, combo);
 		}
 		System.out.println("Raw Quality Rotation leaves "+c3.craft_cp+" CP, "+c3.craft_durability+" durability, "+(c3.quality_goal-c3.craft_quality)+" quality from the goal.");
 		
@@ -145,11 +156,12 @@ public class SigCraft {
 		s.useSkill(c4);
 		quality_rotation2.add(s);
 		combo=false;
-		while (c4.craft_quality<c4.quality_goal && c4.craft_durability>progressSteps*10) {
+		while (c4.craft_quality<c4.quality_goal && IsThereEnoughTurns(c4.craft_durability,c4.BuffList,PROGRESS_FINAL_STEPS)) {
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(c4);
 			quality_rotation2.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, quality_rotation2, c4, combo);
 		}
 		System.out.println("Raw Quality + Inner Quiet Rotation leaves "+c4.craft_cp+" CP, "+c4.craft_durability+" durability, "+(c4.quality_goal-c4.craft_quality)+" quality from the goal.");
 		
@@ -165,17 +177,20 @@ public class SigCraft {
 		s.useSkill(current_craft);
 		current_rotation.add(s);
 		combo=false;
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Innovation").stackCount==0) {
 				s = SKILLLIST.get("Innovation");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
+				combo=false;
 			}
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
+		//System.out.println(current_rotation);
 		System.out.println("Raw Quality + Inner Quiet + Innovation Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 
 		//Add Waste Not
@@ -193,18 +208,21 @@ public class SigCraft {
 		s.useSkill(current_craft);
 		current_rotation.add(s);
 		combo=false;
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Innovation").stackCount==0) {
 				s = SKILLLIST.get("Innovation");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
+				combo=false;
 			}
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
-		System.out.println("Raw Quality + Inner Quiet + Innovation + Waste Not Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
+		//System.out.println(current_rotation);
+		System.out.println("Raw Quality + Inner Quiet + Innovation + Waste Not (once) Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 		
 		//No Innovation
 		List<Skill> quality_rotation5 = new ArrayList<Skill>();
@@ -218,13 +236,14 @@ public class SigCraft {
 		s.useSkill(current_craft);
 		current_rotation.add(s);
 		combo=false;
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
-		System.out.println("Raw Quality + Inner Quiet + Waste Not Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
+		System.out.println("Raw Quality + Inner Quiet + Waste Not (once) Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 
 		
 		//Add Waste Not II
@@ -242,18 +261,20 @@ public class SigCraft {
 		s.useSkill(current_craft);
 		current_rotation.add(s);
 		combo=false;
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Innovation").stackCount==0) {
 				s = SKILLLIST.get("Innovation");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
+				combo=false;
 			}
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
-		System.out.println("Raw Quality + Inner Quiet + Innovation + Waste Not II Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
+		System.out.println("Raw Quality + Inner Quiet + Innovation + Waste Not II (once) Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 		
 		//No Innovation
 		List<Skill> quality_rotation7 = new ArrayList<Skill>();
@@ -267,13 +288,14 @@ public class SigCraft {
 		s.useSkill(current_craft);
 		current_rotation.add(s);
 		combo=false;
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			s = !combo?SKILLLIST.get("Basic Touch"):SKILLLIST.get("Standard Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 			combo=!combo;
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
-		System.out.println("Raw Quality + Inner Quiet + Waste Not II Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
+		System.out.println("Raw Quality + Inner Quiet + Waste Not II (once) Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, "+(current_craft.quality_goal-current_craft.craft_quality)+" quality from the goal.");
 				
 		//Hasty Touch versions
 		List<Skill> quality_rotation8 = new ArrayList<Skill>();
@@ -286,8 +308,8 @@ public class SigCraft {
 		s = SKILLLIST.get("Waste Not II");
 		s.useSkill(current_craft);
 		current_rotation.add(s);
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
-			if (current_craft.BuffList.get("Waste Not II").stackCount==0) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
+			if (current_craft.BuffList.get("Waste Not").stackCount==0) {
 				s = SKILLLIST.get("Waste Not II");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
@@ -295,6 +317,7 @@ public class SigCraft {
 			s = SKILLLIST.get("Hasty Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
 		System.out.println("Hasty Touch + Inner Quiet + Waste Not II Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, ~"+(int)Math.floor((current_craft.quality_goal-current_craft.craft_quality)*0.6)+" quality from the goal.");
 
@@ -308,13 +331,13 @@ public class SigCraft {
 		s = SKILLLIST.get("Waste Not II");
 		s.useSkill(current_craft);
 		current_rotation.add(s);
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Innovation").stackCount==0) {
 				s = SKILLLIST.get("Innovation");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
 			}
-			if (current_craft.BuffList.get("Waste Not II").stackCount==0) {
+			if (current_craft.BuffList.get("Waste Not").stackCount==0) {
 				s = SKILLLIST.get("Waste Not II");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
@@ -322,6 +345,7 @@ public class SigCraft {
 			s = SKILLLIST.get("Hasty Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
 		System.out.println("Hasty Touch + Inner Quiet + Innovation + Waste Not II Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, ~"+(int)Math.floor((current_craft.quality_goal-current_craft.craft_quality)*0.6)+" quality from the goal.");
 
@@ -335,7 +359,7 @@ public class SigCraft {
 		s = SKILLLIST.get("Waste Not");
 		s.useSkill(current_craft);
 		current_rotation.add(s);
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Innovation").stackCount==0) {
 				s = SKILLLIST.get("Innovation");
 				s.useSkill(current_craft);
@@ -349,6 +373,7 @@ public class SigCraft {
 			s = SKILLLIST.get("Hasty Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
 		System.out.println("Hasty Touch + Inner Quiet + Innovation + Waste Not Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, ~"+(int)Math.floor((current_craft.quality_goal-current_craft.craft_quality)*0.6)+" quality from the goal.");
 
@@ -367,7 +392,7 @@ public class SigCraft {
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 		}
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
 			if (current_craft.BuffList.get("Waste Not").stackCount==0) {
 				s = SKILLLIST.get("Waste Not");
 				s.useSkill(current_craft);
@@ -376,6 +401,7 @@ public class SigCraft {
 			s = SKILLLIST.get("Hasty Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
 		System.out.println("Hasty Touch + Inner Quiet + Innovation (Once) + Waste Not Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, ~"+(int)Math.floor((current_craft.quality_goal-current_craft.craft_quality)*0.6)+" quality from the goal.");
 
@@ -394,8 +420,8 @@ public class SigCraft {
 			s.useSkill(current_craft);
 			current_rotation.add(s);
 		}
-		while (current_craft.craft_quality<current_craft.quality_goal && current_craft.craft_durability>progressSteps*10) {
-			if (current_craft.BuffList.get("Waste Not II").stackCount==0) {
+		while (current_craft.craft_quality<current_craft.quality_goal && IsThereEnoughTurns(current_craft.craft_durability,current_craft.BuffList,PROGRESS_FINAL_STEPS)) {
+			if (current_craft.BuffList.get("Waste Not").stackCount==0) {
 				s = SKILLLIST.get("Waste Not II");
 				s.useSkill(current_craft);
 				current_rotation.add(s);
@@ -403,9 +429,25 @@ public class SigCraft {
 			s = SKILLLIST.get("Hasty Touch");
 			s.useSkill(current_craft);
 			current_rotation.add(s);
+			combo = AttemptMastersMend(PROGRESS_FINAL_STEPS, current_rotation, current_craft, combo);
 		}
 		System.out.println("Hasty Touch + Inner Quiet + Innovation (Once) + Waste Not II Rotation leaves "+current_craft.craft_cp+" CP, "+current_craft.craft_durability+" durability, ~"+(int)Math.floor((current_craft.quality_goal-current_craft.craft_quality)*0.6)+" quality from the goal.");
 
+	}
+
+	private static boolean AttemptMastersMend(int PROGRESS_FINAL_STEPS, List<Skill> quality_rotation1, Craft c3,
+			boolean combo) {
+		Skill s;
+		if (!IsThereEnoughTurns(c3.craft_durability,c3.BuffList,PROGRESS_FINAL_STEPS)) {
+			if (c3.craft_cp>=SKILLLIST.get("Master's Mend").CPCost) {
+				s = SKILLLIST.get("Master's Mend");
+				s.useSkill(c3);
+				quality_rotation1.add(s);
+				combo=!combo;
+				System.out.println("Master's Mend is used.");
+			}
+		}
+		return combo;
 	}
 
 }

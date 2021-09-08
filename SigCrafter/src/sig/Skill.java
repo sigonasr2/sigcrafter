@@ -52,7 +52,8 @@ public class Skill implements SkillInterface{
 		c.progress_mult += c.BuffList.get("Veneration").stackCount>0?0.5:0;
 		c.quality_mult += c.BuffList.get("Great Strides").stackCount>0?1:0;
 		c.quality_mult += c.BuffList.get("Innovation").stackCount>0?0.5:0;
-		c.durability_mult = c.BuffList.get("Waste Not").stackCount>0||c.BuffList.get("Waste Not II").stackCount>0?0.5:1;
+		c.durability_mult = c.BuffList.get("Waste Not").stackCount>0?0.5:1;
+		c.SkillList.add(this);
 	}
 	@Override
 	public boolean canBeUsed(Craft c) {

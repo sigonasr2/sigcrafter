@@ -12,6 +12,6 @@ public class WasteNotII extends Skill {
 	@Override
 	public void useSkill(Craft c) {
 		super.useSkill(c);
-		c.BuffList.put("Waste Not II",new Buff("Waste Not II",8));
+		c.BuffList.put("Waste Not",new Buff("Waste Not",8));
 	}
 }
