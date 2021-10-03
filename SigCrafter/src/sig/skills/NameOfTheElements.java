@@ -23,5 +23,6 @@ public class NameOfTheElements extends Skill {
 		super.useSkill(c);
 		c.BuffList.put("Name of the Elements",new Buff("Name of the Elements",3));
 		c.BuffList.put("Name of the Elements Has Been Used",new Buff("Name of the Elements Has Been Used",1));
+		super.updateBuffs(c);
 	}
 }

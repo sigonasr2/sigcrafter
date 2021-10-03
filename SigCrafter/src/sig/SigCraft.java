@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +34,17 @@ import sig.skills.WasteNot;
 import sig.skills.WasteNotII;
 
 public class SigCraft {
-	public static int LEVEL = 48;
+	public static int LEVEL = 100;
 	public static int RECIPE_LEVEL = 41;
-	public static int CP = 282;
+	public static int CP = 280;
 	public static int BASE_PROGRESS = 57;
 	public static int CONTROL = 185;
 	public static int PROGRESS_GOAL = 143;
 	public static int QUALITY_GOAL = 2109;
 	public static boolean GUARANTEED = true;
 	public static int DURABILITY = 80;
+	
+	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Byregot's Blessing");
 	
 	public static Map<String,Buff> BUFFLIST = new HashMap<String,Buff>();
 	public static Map<String,Skill> SKILLLIST = new HashMap<String,Skill>();
@@ -59,6 +62,7 @@ public class SigCraft {
 	
 	public static ColorPosition CRAFTING_WINDOW_PIXELS = new ColorPosition(284,68,77,77,77);
 	public static ColorPosition CRAFT_START_PIXELS = new ColorPosition(334,130,74,77,74);
+	public static ColorPosition PRACTICE_CRAFT_START_PIXELS = new ColorPosition(334,130,41,40,41);
 	public static ColorPosition READY_FOR_ACTION_PIXELS = new ColorPosition(1031,892,230,197,164);
 	
 	//Quality = (0.37 * Control + 32.6) * (1 - 0.05 * min(max(Recipe Level - Character Level, 0), 5))
@@ -67,6 +71,10 @@ public class SigCraft {
 	//Fail conditions: Progress does not reach 100% when durability reaches 0
 	
 	public static ArrayList<Craft> SucceededCrafts = new ArrayList<Craft>();
+	
+	public static Craft CURRENT_CRAFT;
+	
+	public static Condition CURRENT_CONDITION;
 
 	public static void main(String[] args) {
 		
@@ -109,21 +117,30 @@ public class SigCraft {
 		
 		//284,68 77,77,77
 		while (true) {
-			r.delay(1000);
+			r.delay(100);
+			//LookForScreenPixels(CRAFT_START_PIXELS);
+			//System.out.println(GetCondition());
+			CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 			try {
 				Color col=null;
 				LookForScreenPixels(CRAFTING_WINDOW_PIXELS);
+				r.delay(150);
 				System.out.println("Detected crafting window...");
-				PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
-				PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
-				PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
-				PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
+				BufferedImage img;
+				do {
+					PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
+					img = CaptureScreen();
+				} while (new Color(img.getRGB(CRAFTING_WINDOW_PIXELS.p.x,CRAFTING_WINDOW_PIXELS.p.y)).equals(CRAFTING_WINDOW_PIXELS.c));
 				//334,130 74,77,74
-				LookForScreenPixels(CRAFT_START_PIXELS);
+				LookForScreenPixels(CRAFT_START_PIXELS,PRACTICE_CRAFT_START_PIXELS);
 				System.out.println("Craft started...");
 				//336,267 151,220,96
 				LookForScreenPixels(READY_FOR_ACTION_PIXELS);
-				LoadRotation_40Durability_1700Quality_1Synth_280CP_LV47();
+				UpdateCondition();
+				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
+				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
+				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
+				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -131,37 +148,117 @@ public class SigCraft {
 		}
 	}
 
-	private static void LoadRotation_40Durability_1700Quality_1Synth_280CP_LV47() {
+	private static void LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		PerformSkill("Waste Not II");
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		PerformSkill("Great Strides");
+		PerformSkill("Byregot's Blessing");
+		PerformSkill("Basic Synthesis");
+	}
+
+	private static void LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
 		PerformSkill("Innovation",true);
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
-		PerformSkill("Basic Touch",true);
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
 		PerformSkill("Basic Synthesis");
 	}
 
 	private static void LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		boolean combo=false;
 		PerformSkill("Inner Quiet");
-		PerformSkill("Waste Not");
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
-		PerformSkill("Innovation",true);
-		PerformSkill("Basic Touch",true);
-		PerformSkill("Standard Touch",true);
-		PerformSkill("Basic Touch",true);
+		CheckForRecoveryCP();PerformSkill("Innovation");
+		CheckForRecoveryCP();PerformSkill("Waste Not");
+		while (!MaxQuality()) {
+			if (CURRENT_CONDITION==Condition.EXCELLENT) {
+				UseRegularTouch();
+			} else
+			if (CURRENT_CRAFT.BuffList.get("Waste Not").stackCount!=0) {
+				if (!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {
+					break;
+				}
+				UseRegularTouch();
+			} else {
+				CheckForRecoveryCP();PerformSkill("Innovation");
+				CheckForRecoveryCP();PerformSkill("Waste Not");
+			}
+			//System.out.println(IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,2));
+		}
 		PerformSkill("Basic Synthesis");
 	}
+
+	private static void UseRegularTouch() {
+		if ((CURRENT_CRAFT.craft_durability>5&&CURRENT_CRAFT.BuffList.get("Waste Not").stackCount>0)||(CURRENT_CRAFT.craft_durability>10&&CURRENT_CRAFT.BuffList.get("Waste Not").stackCount==0)) {
+			if (CURRENT_CRAFT.craft_cp>=18) {
+				if (IsCombo()) {
+					PerformSkill("Standard Touch",true);
+				} else {
+					PerformSkill("Basic Touch",true);
+				}
+			} else {
+				PerformSkill("Hasty Touch",true);
+			}
+		}
+	}
+
+	private static boolean IsCombo() {
+		return CURRENT_CRAFT.SkillList.get(CURRENT_CRAFT.SkillList.size()-1).name.equals("Basic Touch");
+	}
+
+	private static void CheckForRecoveryCP() {
+		if (CURRENT_CONDITION==Condition.GOOD) {PerformSkill("Tricks of the Trade");}
+	}
 	
-	private static void GetCondition() {
-		
+	private static void UpdateCondition() {
+		//160,282 255,255,255 NORMAL
+		//160,282 255,194,214 GOOD
+		//160,282 <150,<150,<150 POOR
+		//ELSE EXCELLENT
+		try {
+			r.delay(50);
+			LookForScreenPixels(READY_FOR_ACTION_PIXELS,CRAFTING_WINDOW_PIXELS);
+		} catch (IOException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			Color col = new Color(CaptureScreen().getRGB(160, 282));
+			//System.out.println(col);
+			if (col.getRed()<=150&&col.getGreen()<=150&&col.getBlue()<=150) {
+				CURRENT_CONDITION = Condition.POOR;
+				return;
+			} else 
+			if (col.getRed()>=235&&col.getGreen()>=130&&col.getGreen()<=214&&col.getBlue()>=194&&col.getBlue()<=234) {
+				CURRENT_CONDITION = Condition.GOOD;
+				return;
+			} else 
+			if (col.getRed()>=245&&col.getGreen()>=245&&col.getBlue()>=245) {
+				CURRENT_CONDITION = Condition.NORMAL;
+				return;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		CURRENT_CONDITION = Condition.EXCELLENT;
+		return;
 	}
 	
 	private static void PerformSkill(String string) {
@@ -169,12 +266,17 @@ public class SigCraft {
 	}
 
 	private static void PerformSkill(String string,boolean checkForMaxQuality) {
+
+		if (CURRENT_CONDITION==Condition.EXCELLENT&&
+				!VALID_TOUCH_ACTIONS.contains(string)) {
+			UseRegularTouch();
+		}
 		try {
 			LookForScreenPixels(READY_FOR_ACTION_PIXELS);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		r.delay(100);
+		r.delay(40);
 		Skill s = SKILLLIST.get(string);
 		if (s==null) {
 			System.err.println("Could not find skill "+string+"!");
@@ -186,7 +288,13 @@ public class SigCraft {
 		} else {
 			PressKey(s.key);
 		}
-		r.delay(500);
+		if (CURRENT_CRAFT.craft_cp>=s.CPCost) {
+			s.useSkill(CURRENT_CRAFT);
+			System.out.println("   Durability: "+CURRENT_CRAFT.craft_durability);
+		}
+		r.delay(300);
+		UpdateCondition();
+		System.out.println("Condition is now: "+CURRENT_CONDITION);
 		//1031,892 115,98,82 230,197,164
 	}
  
@@ -200,12 +308,20 @@ public class SigCraft {
 		return col.getRed()==151&&col.getGreen()==220&&col.getBlue()==96;
 	}
 
-	private static void LookForScreenPixels(ColorPosition cp) throws IOException, InterruptedException {
+	private static void LookForScreenPixels(ColorPosition...cp) throws IOException, InterruptedException {
 		Color col;
+		boolean found=false;
 		do {
-			col = new Color(CaptureScreen().getRGB(cp.p.x, cp.p.y));
+			BufferedImage screen = CaptureScreen();
+			for (ColorPosition cpp : cp) {
+				col = new Color(screen.getRGB(cpp.p.x, cpp.p.y));
+				if (cpp.c.equals(col)) {
+					found=true;
+					break;
+				}
+			}
 			r.delay(100);
-		} while (!cp.c.equals(col));
+		} while (!found);
 	}
 
 	private static BufferedImage CaptureScreen() throws IOException {
@@ -231,6 +347,7 @@ public class SigCraft {
 		int turnsRemaining = (int)(durability%2==1&&wasteNot.stackCount%2==1?Math.ceil(((double)wasteNot.stackCount/2))-1:Math.ceil((double)wasteNot.stackCount/2))+(int)Math.ceil(durability/10);
 		int maxHalfTurnsRemaining = durability/5;
 		turnsRemaining = Math.min(maxHalfTurnsRemaining,turnsRemaining);
+		System.out.println("Turns Remaining: "+turnsRemaining);
 		return turnsRemaining>turnsRequired;
 	}
 	

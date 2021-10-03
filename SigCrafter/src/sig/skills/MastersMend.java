@@ -17,6 +17,7 @@ public class MastersMend extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.craft_durability = Math.min(c.durability,c.craft_durability+30);
+		super.updateBuffs(c);
 	}
 
 }

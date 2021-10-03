@@ -17,5 +17,6 @@ public class GreatStrides extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.BuffList.put("Great Strides",new Buff("Great Strides",3));
+		super.updateBuffs(c);
 	}
 }

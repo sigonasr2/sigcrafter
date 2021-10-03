@@ -57,4 +57,14 @@ public class Craft {
 				+ quality_mult + ", durability_mult=" + durability_mult + ", SkillList=" + SkillList + ", BuffList="
 				+ BuffList + ", CraftList=" + CraftList + "]";
 	}
+	public String getRotationString() {
+		StringBuilder sb = new StringBuilder();
+		for (Skill s : SkillList) {
+			if (sb.length()>0) {
+				sb.append(" -> ");
+			}
+			sb.append(s.getName());
+		}
+		return sb.toString();
+	}
 }

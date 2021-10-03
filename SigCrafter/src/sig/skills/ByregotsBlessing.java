@@ -15,10 +15,10 @@ public class ByregotsBlessing extends Skill {
 
 	@Override
 	public void useSkill(Craft c) {
-		super.useSkill(c);
-		//TODO Actually implement it.
 		c.craft_quality += 1 * (c.quality_mult+c.BuffList.get("Inner Quiet").stackCount*0.2) * (0.37*c.control+32.6)*(1-0.05*Math.min(Math.max(c.recipe_level-c.level,0),5));
 		c.craft_durability -= 10 * c.durability_mult;
-		if (c.BuffList.get("Inner Quiet").stackCount>0) {c.BuffList.get("Inner Quiet").stackCount++;}
+		super.useSkill(c);
+		c.BuffList.get("Inner Quiet").stackCount=0;
+		super.updateBuffs(c);
 	}
 }

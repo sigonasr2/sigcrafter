@@ -45,9 +45,6 @@ public class Skill implements SkillInterface{
 	@Override
 	public void useSkill(Craft c) {
 		c.craft_cp -= CPCost;
-		c.progress_mult=1;
-		c.quality_mult=1;
-		c.durability_mult=1;
 		c.control = c.base_control;
 		for (String key : c.BuffList.keySet()) {
 			if (c.BuffList.get(key).stackCount>0 && !key.equalsIgnoreCase("Inner Quiet") && !key.equalsIgnoreCase("Name of the Elements Has Been Used")) {
@@ -55,15 +52,20 @@ public class Skill implements SkillInterface{
 			}
 		}
 		c.control += c.base_control * 0.2 * c.BuffList.get("Inner Quiet").stackCount;
-		c.quality_mult += c.craft_status==Status.GOOD?0.5:c.craft_status==Status.EXCELLENT?3.0:0;
-		c.progress_mult += c.BuffList.get("Veneration").stackCount>0?0.5:0;
-		c.quality_mult += c.BuffList.get("Great Strides").stackCount>0?1:0;
-		c.quality_mult += c.BuffList.get("Innovation").stackCount>0?0.5:0;
-		c.durability_mult = c.BuffList.get("Waste Not").stackCount>0?0.5:1;
 		c.SkillList.add(this);
 	}
 	@Override
 	public boolean canBeUsed(Craft c) {
 		return c.craft_cp>=CPCost;
+	}
+	public void updateBuffs(Craft c) {
+		c.progress_mult=1;
+		c.quality_mult=1;
+		c.durability_mult=1;
+		c.quality_mult += c.craft_status==Status.GOOD?0.5:c.craft_status==Status.EXCELLENT?3.0:0;
+		c.progress_mult += c.BuffList.get("Veneration").stackCount>0?0.5:0;
+		c.quality_mult += c.BuffList.get("Great Strides").stackCount>0?1:0;
+		c.quality_mult += c.BuffList.get("Innovation").stackCount>0?0.5:0;
+		c.durability_mult = c.BuffList.get("Waste Not").stackCount>0?0.5:1;
 	}	
 }

@@ -17,5 +17,6 @@ public class Veneration extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.BuffList.put("Veneration",new Buff("Veneration",4));
+		super.updateBuffs(c);
 	}
 }

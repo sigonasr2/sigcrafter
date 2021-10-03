@@ -17,5 +17,6 @@ public class WasteNotII extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.BuffList.put("Waste Not",new Buff("Waste Not",8));
+		super.updateBuffs(c);
 	}
 }

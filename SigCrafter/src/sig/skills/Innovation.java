@@ -17,5 +17,6 @@ public class Innovation extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.BuffList.put("Innovation",new Buff("Innovation",4));
+		super.updateBuffs(c);
 	}
 }

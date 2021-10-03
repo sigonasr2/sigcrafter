@@ -15,5 +15,6 @@ public class Observe extends Skill {
 	@Override
 	public void useSkill(Craft c) {
 		super.useSkill(c);
+		super.updateBuffs(c);
 	}
 }

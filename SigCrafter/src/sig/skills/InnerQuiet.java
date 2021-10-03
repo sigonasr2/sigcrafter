@@ -22,5 +22,6 @@ public class InnerQuiet extends Skill {
 	public void useSkill(Craft c) {
 		super.useSkill(c);
 		c.BuffList.put("Inner Quiet",new Buff("Inner Quiet",1));
+		super.updateBuffs(c);
 	}
 }

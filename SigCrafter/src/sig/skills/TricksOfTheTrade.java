@@ -21,8 +21,9 @@ public class TricksOfTheTrade extends Skill {
 
 	@Override
 	public void useSkill(Craft c) {
-		super.useSkill(c);
 		c.craft_cp = Math.min(c.cp,c.craft_cp+20);
+		super.useSkill(c);
+		super.updateBuffs(c);
 	}
 
 }
