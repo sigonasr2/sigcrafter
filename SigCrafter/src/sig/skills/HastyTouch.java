@@ -5,8 +5,12 @@ import sig.Skill;
 
 public class HastyTouch extends Skill {
 
-	public HastyTouch(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public HastyTouch(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq, modifier, key);
+	}
+
+	public HastyTouch(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq, key);
 	}
 
 	@Override

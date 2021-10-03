@@ -6,8 +6,12 @@ import sig.Status;
 
 public class TricksOfTheTrade extends Skill {
 
-	public TricksOfTheTrade(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public TricksOfTheTrade(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq, modifier, key);
+	}
+
+	public TricksOfTheTrade(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq, key);
 	}
 
 	@Override

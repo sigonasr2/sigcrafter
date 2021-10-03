@@ -4,8 +4,12 @@ import sig.Craft;
 import sig.Skill;
 
 public class Observe extends Skill {
-	public Observe(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public Observe(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq, modifier, key);
+	}
+
+	public Observe(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq, key);
 	}
 
 	@Override

@@ -5,8 +5,11 @@ import sig.Skill;
 
 public class BasicTouch extends Skill {
 
-	public BasicTouch(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public BasicTouch(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq,modifier,key);
+	}
+	public BasicTouch(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq,key);
 	}
 
 	@Override

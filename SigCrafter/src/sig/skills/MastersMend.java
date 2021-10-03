@@ -5,8 +5,12 @@ import sig.Skill;
 
 public class MastersMend extends Skill {
 
-	public MastersMend(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public MastersMend(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq, modifier, key);
+	}
+
+	public MastersMend(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq, key);
 	}
 
 	@Override

@@ -5,11 +5,18 @@ public class Skill implements SkillInterface{
 	public int CPCost;
 	public boolean guaranteed;
 	public int lvReq;
-	public Skill(String name, int CPCost, boolean guaranteed, int lvReq) {
+	public int modifier;
+	public int key;
+	public Skill(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
 		this.name = name;
 		this.CPCost = CPCost;
 		this.guaranteed = guaranteed;
 		this.lvReq = lvReq;
+		this.modifier=modifier;
+		this.key=key;
+	}
+	public Skill(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		this(name,CPCost,guaranteed,lvReq,-1,key);
 	}
 	public String getName() {
 		return name;

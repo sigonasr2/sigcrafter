@@ -5,8 +5,12 @@ import sig.Craft;
 import sig.Skill;
 
 public class InnerQuiet extends Skill {
-	public InnerQuiet(String name, int CPCost, boolean guaranteed, int lvReq) {
-		super(name, CPCost, guaranteed, lvReq);
+	public InnerQuiet(String name, int CPCost, boolean guaranteed, int lvReq, int modifier, int key) {
+		super(name, CPCost, guaranteed, lvReq, modifier, key);
+	}
+
+	public InnerQuiet(String name, int CPCost, boolean guaranteed, int lvReq, int key) {
+		super(name, CPCost, guaranteed, lvReq, key);
 	}
 
 	@Override
