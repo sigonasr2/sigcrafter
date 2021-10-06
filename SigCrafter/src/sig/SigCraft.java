@@ -137,7 +137,8 @@ public class SigCraft {
 				//336,267 151,220,96
 				LookForScreenPixels(READY_FOR_ACTION_PIXELS);
 				UpdateCondition();
-				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
+				LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
+				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
@@ -159,8 +160,8 @@ public class SigCraft {
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
-		PerformSkill("Great Strides");
-		PerformSkill("Byregot's Blessing");
+		PerformSkill("Great Strides",true);
+		PerformSkill("Byregot's Blessing",true);
 		PerformSkill("Basic Synthesis");
 	}
 
@@ -175,6 +176,23 @@ public class SigCraft {
 		UseRegularTouch();
 		UseRegularTouch();
 		PerformSkill("Innovation",true);
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		PerformSkill("Basic Synthesis");
+	}
+
+	private static void LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		PerformSkill("Innovation");
+		PerformSkill("Waste Not II");
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		//PerformSkill("Innovation",true);
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
