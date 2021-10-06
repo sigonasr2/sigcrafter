@@ -44,7 +44,7 @@ public class SigCraft {
 	public static boolean GUARANTEED = true;
 	public static int DURABILITY = 80;
 	
-	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Byregot's Blessing");
+	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Byregot's Blessing","Brand of the Elements");
 	
 	public static Map<String,Buff> BUFFLIST = new HashMap<String,Buff>();
 	public static Map<String,Skill> SKILLLIST = new HashMap<String,Skill>();
@@ -283,6 +283,7 @@ public class SigCraft {
 			System.exit(1);
 		}
 		if (checkForMaxQuality&&MaxQuality()) {return;}
+		if (VALID_TOUCH_ACTIONS.contains(string)&&!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {return;}
 		if (s.modifier!=-1) {
 			PressKeyWithModifier(s.modifier,s.key);
 		} else {
