@@ -262,7 +262,7 @@ public class SigCraft {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		PerformSkill("Waste Not II");
 		UseRegularTouch();
 		UseRegularTouch();
@@ -279,16 +279,16 @@ public class SigCraft {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
-		CONDITION_CHECK = true;
+		CONDITION_CHECK = true;UpdateCondition();
 		PerformSkill("Innovation",true);
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
@@ -299,14 +299,14 @@ public class SigCraft {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
 		UseRegularTouch();
 		UseRegularTouch();
-		CONDITION_CHECK = true;
+		CONDITION_CHECK = true;UpdateCondition();
 		PerformSkill("Innovation",true);
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
@@ -318,7 +318,7 @@ public class SigCraft {
 	private static void LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47() {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		PerformSkill("Inner Quiet");
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
@@ -337,7 +337,7 @@ public class SigCraft {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
-		CONDITION_CHECK = false;
+		CONDITION_CHECK = false;UpdateCondition();
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
 		UseRegularTouch();
@@ -406,6 +406,7 @@ public class SigCraft {
 		//160,282 <150,<150,<150 POOR
 		//ELSE EXCELLENT
 		if (!CONDITION_CHECK) {
+			CURRENT_CONDITION=Condition.NORMAL;
 			return;
 		}
 		try {
