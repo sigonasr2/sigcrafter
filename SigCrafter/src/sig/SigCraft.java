@@ -405,7 +405,7 @@ public class SigCraft {
 		//160,282 255,194,214 GOOD
 		//160,282 <150,<150,<150 POOR
 		//ELSE EXCELLENT
-		if (CONDITION_CHECK) {
+		if (!CONDITION_CHECK) {
 			return;
 		}
 		try {
@@ -471,7 +471,9 @@ public class SigCraft {
 		}
 		r.delay(300);
 		UpdateCondition();
-		System.out.println("Condition is now: "+CURRENT_CONDITION);
+		if (CONDITION_CHECK) {
+			System.out.println("Condition is now: "+CURRENT_CONDITION);
+		}
 		//1031,892 115,98,82 230,197,164
 	}
  
