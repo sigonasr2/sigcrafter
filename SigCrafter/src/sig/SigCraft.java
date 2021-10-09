@@ -44,7 +44,7 @@ public class SigCraft {
 	public static boolean GUARANTEED = true;
 	public static int DURABILITY = 80;
 	
-	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Byregot's Blessing","Brand of the Elements");
+	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Hasty Touch","Byregot's Blessing","Brand of the Elements");
 	
 	public static Map<String,Buff> BUFFLIST = new HashMap<String,Buff>();
 	public static Map<String,Skill> SKILLLIST = new HashMap<String,Skill>();
@@ -53,6 +53,8 @@ public class SigCraft {
 	public static int CRAFT_QUALITY = 0;
 	public static int CRAFT_DURABILITY = 0;
 	public static int CRAFT_CP = 0;
+	
+	public static boolean CONDITION_CHECK = true;
 
 	public static List<Skill> PROGRESS_ROTATION = new ArrayList<Skill>();
 	
@@ -127,20 +129,26 @@ public class SigCraft {
 				r.delay(150);
 				System.out.println("Detected crafting window...");
 				BufferedImage img;
+				int attempts=0;
 				do {
 					PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
 					img = CaptureScreen();
+					if (++attempts>20) {System.exit(1);}
 				} while (new Color(img.getRGB(CRAFTING_WINDOW_PIXELS.p.x,CRAFTING_WINDOW_PIXELS.p.y)).equals(CRAFTING_WINDOW_PIXELS.c));
 				//334,130 74,77,74
 				LookForScreenPixels(CRAFT_START_PIXELS,PRACTICE_CRAFT_START_PIXELS);
 				System.out.println("Craft started...");
 				//336,267 151,220,96
 				LookForScreenPixels(READY_FOR_ACTION_PIXELS);
+				CONDITION_CHECK = true;
 				UpdateCondition();
-				LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
-				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
+				//LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
+				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
+				//LoadRotation_40Durability_1700Quality_1Synth_wVeneration_278CP_LV47();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
+				//LoadRotation_40Durability_2300Quality_1Synth_282CP_LV50();
+				//LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47();
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
@@ -149,11 +157,113 @@ public class SigCraft {
 		}
 	}
 
+	private static void LoadRotation_40Durability_2300Quality_1Synth_282CP_LV50() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		boolean tricksUsed = false;
+		tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Waste Not II");
+		while (CURRENT_CRAFT.craft_durability>10&&!MaxQuality()) {
+			if (CURRENT_CONDITION==Condition.EXCELLENT) {
+				PerformSkill("Basic Touch",true);
+				PerformSkill("Innovation",true);
+				while (CURRENT_CRAFT.craft_durability>10&&CURRENT_CRAFT.BuffList.get("Waste Not").stackCount>=3) {
+					UseRegularTouch();
+				}
+				PerformSkill("Great Strides",true);
+				PerformSkill("Byregot's Blessing",true);
+				PerformSkill("Basic Synthesis");
+				return;
+			}
+			PerformSkill("Hasty Touch",true);
+		}
+		PerformSkill("Master's Mend",true);
+		//tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Hasty Touch",true);
+		tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Hasty Touch",true);
+		if (CheckForRecoveryCP()) {
+			if (!tricksUsed) {
+				tricksUsed=true;
+				UseRegularTouch();
+			}
+		}
+		PerformSkill("Innovation",true);
+		if (CURRENT_CRAFT.craft_cp>=84) {
+			UseRegularTouch();
+		} else {
+			CheckForRecoveryCP();PerformSkill("Hasty Touch",true);
+		}
+		PerformSkill("Great Strides",true);
+		if (CURRENT_CRAFT.craft_cp>=24) {
+			while (CURRENT_CRAFT.BuffList.get("Great Strides").stackCount>=2&&CURRENT_CRAFT.BuffList.get("Innovation").stackCount>=2&&CURRENT_CRAFT.craft_cp>=31&&CURRENT_CONDITION!=Condition.GOOD&&CURRENT_CONDITION!=Condition.EXCELLENT) {
+				PerformSkill("Observe",true);
+			}
+			PerformSkill("Byregot's Blessing",true);
+			
+		} else {
+			UseRegularTouch();
+		}
+		PerformSkill("Basic Synthesis");
+	}
+
+	private static void LoadRotation_40Durability_2300Quality_2Synth_282CP_LV50() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		boolean tricksUsed = false;
+		tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Waste Not II");
+		while (CURRENT_CRAFT.craft_durability>10&&!MaxQuality()) {
+			PerformSkill("Hasty Touch",true);
+		}
+		PerformSkill("Master's Mend",true);
+		//tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Hasty Touch",true);
+		tricksUsed=CheckForRecoveryCP()||tricksUsed;
+		PerformSkill("Hasty Touch",true);
+		if (tricksUsed) {
+			PerformSkill("Hasty Touch",true);
+		}
+		if (CheckForRecoveryCP()) {
+			if (!tricksUsed) {
+				tricksUsed=true;
+				PerformSkill("Hasty Touch",true);
+			}
+		}
+		PerformSkill("Great Strides",true);
+		if (CheckForRecoveryCP()) {
+			if (!tricksUsed) {
+				tricksUsed=true;
+				PerformSkill("Hasty Touch",true);
+			}
+		}
+		PerformSkill("Innovation",true);
+		if (CURRENT_CRAFT.craft_cp>=24) {
+			PerformSkill("Byregot's Blessing",true);
+		} else {
+			UseRegularTouch();
+		}
+		if (tricksUsed) {
+			PerformSkill("Veneration");
+		}
+		if (CURRENT_CRAFT.craft_cp>=18) {
+			tricksUsed=true;
+			PerformSkill("Hasty Touch",true);
+		}
+		PerformSkill("Basic Synthesis");
+		if (!tricksUsed) {
+			PerformSkill("Basic Synthesis");
+		}
+	}
+
 	private static void LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50() {
 		DURABILITY=40;
 		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
 		PerformSkill("Inner Quiet");
 		PerformSkill("Waste Not II");
+		CONDITION_CHECK = false;
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
@@ -171,14 +281,37 @@ public class SigCraft {
 		PerformSkill("Inner Quiet");
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
+		CONDITION_CHECK = false;
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
+		CONDITION_CHECK = true;
 		PerformSkill("Innovation",true);
+		CONDITION_CHECK = false;
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
+		PerformSkill("Basic Synthesis");
+	}
+
+	private static void LoadRotation_40Durability_1700Quality_1Synth_wVeneration_278CP_LV47() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		PerformSkill("Innovation");
+		PerformSkill("Waste Not II");
+		CONDITION_CHECK = false;
+		UseRegularTouch();
+		UseRegularTouch();
+		CONDITION_CHECK = true;
+		PerformSkill("Innovation",true);
+		CONDITION_CHECK = false;
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		PerformSkill("Veneration");
 		PerformSkill("Basic Synthesis");
 	}
 
@@ -188,6 +321,7 @@ public class SigCraft {
 		PerformSkill("Inner Quiet");
 		PerformSkill("Innovation");
 		PerformSkill("Waste Not II");
+		CONDITION_CHECK = false;
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
@@ -196,6 +330,25 @@ public class SigCraft {
 		UseRegularTouch();
 		UseRegularTouch();
 		UseRegularTouch();
+		PerformSkill("Basic Synthesis");
+	}
+
+	private static void LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		PerformSkill("Innovation");
+		PerformSkill("Waste Not II");
+		CONDITION_CHECK = false;
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		//PerformSkill("Innovation",true);
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		PerformSkill("Veneration");
 		PerformSkill("Basic Synthesis");
 	}
 
@@ -242,8 +395,9 @@ public class SigCraft {
 		return CURRENT_CRAFT.SkillList.get(CURRENT_CRAFT.SkillList.size()-1).name.equals("Basic Touch");
 	}
 
-	private static void CheckForRecoveryCP() {
+	private static boolean CheckForRecoveryCP() {
 		if (CURRENT_CONDITION==Condition.GOOD) {PerformSkill("Tricks of the Trade");}
+		return CURRENT_CONDITION==Condition.GOOD;
 	}
 	
 	private static void UpdateCondition() {
@@ -251,6 +405,9 @@ public class SigCraft {
 		//160,282 255,194,214 GOOD
 		//160,282 <150,<150,<150 POOR
 		//ELSE EXCELLENT
+		if (CONDITION_CHECK) {
+			return;
+		}
 		try {
 			r.delay(50);
 			LookForScreenPixels(READY_FOR_ACTION_PIXELS,CRAFTING_WINDOW_PIXELS);
@@ -289,6 +446,9 @@ public class SigCraft {
 				!VALID_TOUCH_ACTIONS.contains(string)) {
 			UseRegularTouch();
 		}
+		if (checkForMaxQuality&&MaxQuality()) {return;}
+		if (VALID_TOUCH_ACTIONS.contains(string)&&!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {return;}
+		//System.out.println("   Still enough Turns.");
 		try {
 			LookForScreenPixels(READY_FOR_ACTION_PIXELS);
 		} catch (IOException | InterruptedException e) {
@@ -300,8 +460,6 @@ public class SigCraft {
 			System.err.println("Could not find skill "+string+"!");
 			System.exit(1);
 		}
-		if (checkForMaxQuality&&MaxQuality()) {return;}
-		if (VALID_TOUCH_ACTIONS.contains(string)&&!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {return;}
 		if (s.modifier!=-1) {
 			PressKeyWithModifier(s.modifier,s.key);
 		} else {
@@ -309,7 +467,7 @@ public class SigCraft {
 		}
 		if (CURRENT_CRAFT.craft_cp>=s.CPCost) {
 			s.useSkill(CURRENT_CRAFT);
-			System.out.println("   Durability: "+CURRENT_CRAFT.craft_durability);
+			System.out.println("   Durability: "+CURRENT_CRAFT.craft_durability+"  CP:"+CURRENT_CRAFT.craft_cp);
 		}
 		r.delay(300);
 		UpdateCondition();
@@ -339,7 +497,7 @@ public class SigCraft {
 					break;
 				}
 			}
-			r.delay(100);
+			r.delay(10);
 		} while (!found);
 	}
 
@@ -363,7 +521,7 @@ public class SigCraft {
 	
 	public static boolean IsThereEnoughTurns(int durability,Map<String,Buff> bufflist,int turnsRequired) {
 		Buff wasteNot = bufflist.get("Waste Not");
-		int turnsRemaining = (int)(durability%2==1&&wasteNot.stackCount%2==1?Math.ceil(((double)wasteNot.stackCount/2))-1:Math.ceil((double)wasteNot.stackCount/2))+(int)Math.ceil(durability/10);
+		int turnsRemaining = (int)(durability%2==1&&wasteNot.stackCount%2==1?Math.ceil(((double)wasteNot.stackCount/2))-1:Math.ceil((double)wasteNot.stackCount/2))+(int)Math.ceil(durability/10)+(durability%2==1?1:0);
 		int maxHalfTurnsRemaining = durability/5;
 		turnsRemaining = Math.min(maxHalfTurnsRemaining,turnsRemaining);
 		System.out.println("Turns Remaining: "+turnsRemaining);
