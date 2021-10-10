@@ -143,12 +143,12 @@ public class SigCraft {
 				CONDITION_CHECK = true;
 				UpdateCondition();
 				//LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
-				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
+				//LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47();
 				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
 				//LoadRotation_40Durability_1700Quality_1Synth_wVeneration_278CP_LV47();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
+				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_2300Quality_1Synth_282CP_LV50();
-				//LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47();
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
