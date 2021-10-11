@@ -36,7 +36,7 @@ import sig.skills.WasteNotII;
 public class SigCraft {
 	public static int LEVEL = 100;
 	public static int RECIPE_LEVEL = 41;
-	public static int CP = 280;
+	public static int CP = 282;
 	public static int BASE_PROGRESS = 57;
 	public static int CONTROL = 185;
 	public static int PROGRESS_GOAL = 143;
@@ -144,10 +144,10 @@ public class SigCraft {
 				UpdateCondition();
 				//LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
 				//LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47();
-				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
+				LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
 				//LoadRotation_40Durability_1700Quality_1Synth_wVeneration_278CP_LV47();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
-				LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
+				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_2300Quality_1Synth_282CP_LV50();
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
 			} catch (IOException | InterruptedException e) {
@@ -447,15 +447,17 @@ public class SigCraft {
 				!VALID_TOUCH_ACTIONS.contains(string)) {
 			UseRegularTouch();
 		}
-		if (checkForMaxQuality&&MaxQuality()) {return;}
-		if (VALID_TOUCH_ACTIONS.contains(string)&&!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {return;}
-		//System.out.println("   Still enough Turns.");
 		try {
 			LookForScreenPixels(READY_FOR_ACTION_PIXELS);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		r.delay(40);
+		if (checkForMaxQuality&&MaxQuality()) {
+			return;
+		}
+		if (VALID_TOUCH_ACTIONS.contains(string)&&!IsThereEnoughTurns(CURRENT_CRAFT.craft_durability,CURRENT_CRAFT.BuffList,1)) {return;}
+		//System.out.println("   Still enough Turns.");
 		Skill s = SKILLLIST.get(string);
 		if (s==null) {
 			System.err.println("Could not find skill "+string+"!");
@@ -482,6 +484,7 @@ public class SigCraft {
 		Color col=null;
 		try {
 			col = new Color(CaptureScreen().getRGB(336, 267));
+			//System.out.println(col);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
