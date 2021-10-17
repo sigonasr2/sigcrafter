@@ -32,17 +32,23 @@ import sig.skills.TricksOfTheTrade;
 import sig.skills.Veneration;
 import sig.skills.WasteNot;
 import sig.skills.WasteNotII;
+import sig.utils.FileUtils;
 
 public class SigCraft {
 	public static int LEVEL = 100;
 	public static int RECIPE_LEVEL = 41;
-	public static int CP = 282;
+	public static int CP = 280;
 	public static int BASE_PROGRESS = 57;
 	public static int CONTROL = 185;
 	public static int PROGRESS_GOAL = 143;
 	public static int QUALITY_GOAL = 2109;
 	public static boolean GUARANTEED = true;
 	public static int DURABILITY = 80;
+	
+	public static int NORMAL_COUNT = 0;
+	public static int GOOD_COUNT = 0;
+	public static int EXCELLENT_COUNT = 0;
+	public static boolean STAT_TRACKING = true;
 	
 	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Hasty Touch","Byregot's Blessing","Brand of the Elements");
 	
@@ -117,6 +123,11 @@ public class SigCraft {
 		
 		//SetupCraft();
 		
+		String[] data = FileUtils.readFromFile("condition_stats.txt");
+		NORMAL_COUNT = Integer.parseInt(data[0]);
+		GOOD_COUNT = Integer.parseInt(data[1]);
+		EXCELLENT_COUNT = Integer.parseInt(data[2]);
+		
 		//284,68 77,77,77
 		while (true) {
 			r.delay(100);
@@ -133,7 +144,7 @@ public class SigCraft {
 				do {
 					PressKey(KeyEvent.VK_NUMPAD0);r.delay(300);
 					img = CaptureScreen();
-					if (++attempts>20) {System.exit(1);}
+					if (++attempts>20) {PressKey(KeyEvent.VK_ESCAPE);r.delay(300);PressKey(KeyEvent.VK_ESCAPE);r.delay(300);System.exit(1);}
 				} while (new Color(img.getRGB(CRAFTING_WINDOW_PIXELS.p.x,CRAFTING_WINDOW_PIXELS.p.y)).equals(CRAFTING_WINDOW_PIXELS.c));
 				//334,130 74,77,74
 				LookForScreenPixels(CRAFT_START_PIXELS,PRACTICE_CRAFT_START_PIXELS);
@@ -142,14 +153,18 @@ public class SigCraft {
 				LookForScreenPixels(READY_FOR_ACTION_PIXELS);
 				CONDITION_CHECK = true;
 				UpdateCondition();
+				LoadRotation_40Durability_800Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_1200Quality_1Synth_282CP_LV47();
 				//LoadRotation_40Durability_1200Quality_1Synth_wVeneration_280CP_LV47();
-				LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
+				//LoadRotation_40Durability_1700Quality_1Synth_278CP_LV47();
 				//LoadRotation_40Durability_1700Quality_1Synth_wVeneration_278CP_LV47();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV45();
 				//LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50();
 				//LoadRotation_40Durability_2300Quality_1Synth_282CP_LV50();
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
+				FileUtils.writetoFile(new String[]{Integer.toString(NORMAL_COUNT),Integer.toString(GOOD_COUNT),Integer.toString(EXCELLENT_COUNT),},"condition_stats.txt");
+				int TOTAL_COUNT = NORMAL_COUNT+GOOD_COUNT+EXCELLENT_COUNT;
+				System.out.println("Condition Stats: NORMAL ("+NORMAL_COUNT+"): "+(Math.round((double)NORMAL_COUNT/TOTAL_COUNT)*100)+"%   GOOD ("+GOOD_COUNT+"): "+(Math.round((double)GOOD_COUNT/TOTAL_COUNT)*100)+"%   EXCELLENT ("+EXCELLENT_COUNT+"): "+(Math.round((double)EXCELLENT_COUNT/TOTAL_COUNT)*100)+"%");
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -256,6 +271,20 @@ public class SigCraft {
 		if (!tricksUsed) {
 			PerformSkill("Basic Synthesis");
 		}
+	}
+
+	private static void LoadRotation_40Durability_800Quality_1Synth_280CP_LV50() {
+		DURABILITY=40;
+		CURRENT_CRAFT = new Craft(CONTROL,LEVEL,CP,BASE_PROGRESS,PROGRESS_GOAL,QUALITY_GOAL,GUARANTEED,DURABILITY,CRAFT_PROGRESS,CRAFT_QUALITY,DURABILITY,CP,1,1,1,RECIPE_LEVEL,Status.NORMAL,BUFFLIST);
+		PerformSkill("Inner Quiet");
+		CONDITION_CHECK = false;UpdateCondition();
+		PerformSkill("Waste Not II");
+		UseRegularTouch();
+		UseRegularTouch();
+		UseRegularTouch();
+		PerformSkill("Great Strides",true);
+		PerformSkill("Byregot's Blessing",true);
+		PerformSkill("Basic Synthesis");
 	}
 
 	private static void LoadRotation_40Durability_1900Quality_1Synth_280CP_LV50() {
@@ -405,7 +434,7 @@ public class SigCraft {
 		//160,282 255,194,214 GOOD
 		//160,282 <150,<150,<150 POOR
 		//ELSE EXCELLENT
-		if (!CONDITION_CHECK) {
+		if (!CONDITION_CHECK&&!STAT_TRACKING) {
 			CURRENT_CONDITION=Condition.NORMAL;
 			return;
 		}
@@ -424,16 +453,19 @@ public class SigCraft {
 			} else 
 			if (col.getRed()>=235&&col.getGreen()>=130&&col.getGreen()<=214&&col.getBlue()>=194&&col.getBlue()<=234) {
 				CURRENT_CONDITION = Condition.GOOD;
+				if (STAT_TRACKING) {GOOD_COUNT++;}
 				return;
 			} else 
 			if (col.getRed()>=245&&col.getGreen()>=245&&col.getBlue()>=245) {
 				CURRENT_CONDITION = Condition.NORMAL;
+				if (STAT_TRACKING) {NORMAL_COUNT++;}
 				return;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		CURRENT_CONDITION = Condition.EXCELLENT;
+		if (STAT_TRACKING) {EXCELLENT_COUNT++;}
 		return;
 	}
 	
