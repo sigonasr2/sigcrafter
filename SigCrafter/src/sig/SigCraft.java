@@ -8,6 +8,8 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +51,7 @@ public class SigCraft {
 	public static int GOOD_COUNT = 0;
 	public static int EXCELLENT_COUNT = 0;
 	public static boolean STAT_TRACKING = true;
+	final static NumberFormat displayFormat = new DecimalFormat("#0.0");
 	
 	public static List<String> VALID_TOUCH_ACTIONS = Arrays.asList("Basic Touch","Standard Touch","Hasty Touch","Byregot's Blessing","Brand of the Elements");
 	
@@ -164,7 +167,7 @@ public class SigCraft {
 				System.out.println("Rotation: "+CURRENT_CRAFT.getRotationString());
 				FileUtils.writetoFile(new String[]{Integer.toString(NORMAL_COUNT),Integer.toString(GOOD_COUNT),Integer.toString(EXCELLENT_COUNT),},"condition_stats.txt");
 				int TOTAL_COUNT = NORMAL_COUNT+GOOD_COUNT+EXCELLENT_COUNT;
-				System.out.println("Condition Stats: NORMAL ("+NORMAL_COUNT+"): "+(Math.round((double)NORMAL_COUNT/TOTAL_COUNT)*100)+"%   GOOD ("+GOOD_COUNT+"): "+(Math.round((double)GOOD_COUNT/TOTAL_COUNT)*100)+"%   EXCELLENT ("+EXCELLENT_COUNT+"): "+(Math.round((double)EXCELLENT_COUNT/TOTAL_COUNT)*100)+"%");
+				System.out.println("  Condition Stats: NORMAL ("+NORMAL_COUNT+"): "+(displayFormat.format(((double)NORMAL_COUNT/TOTAL_COUNT)*100))+"%   GOOD ("+GOOD_COUNT+"): "+(displayFormat.format(((double)GOOD_COUNT/TOTAL_COUNT*100)))+"%   EXCELLENT ("+EXCELLENT_COUNT+"): "+(displayFormat.format(((double)EXCELLENT_COUNT/TOTAL_COUNT)*100))+"%");
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
